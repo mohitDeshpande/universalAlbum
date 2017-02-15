@@ -1,4 +1,4 @@
-package com.humber.java;
+package com.humber.java.view;
 
 import javax.swing.*;
 
@@ -16,11 +16,16 @@ public class Gui  extends JFrame {
 
     JMenu viewMenu;
 
+    AlbumViewPanel albumViewPanel;
+
+
+
     public Gui() {
         super("Assignment 1");
         this.setSize(500,500);
 
         createMenu();
+
 
 
         this.setVisible(true);

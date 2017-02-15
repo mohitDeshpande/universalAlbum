@@ -1,6 +1,7 @@
-package com.humber.java;
+package com.humber.java.model;
 
 import javax.swing.*;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -21,6 +22,7 @@ public class Album {
         this.name = name;
         this.createdOn = createdOn;
         this.editedBy = editedBy;
+        images = new ArrayList<ImageIcon>();
     }
 
 
@@ -51,6 +53,14 @@ public class Album {
 
     public List<ImageIcon> getImages() {
         return images;
+    }
+
+    /**
+     * Get this count of image icons in this album
+     * @return
+     */
+    public int getPhotoCount() {
+        return this.images.size();
     }
 
     public void setImages(List<ImageIcon> images) {
