@@ -3,6 +3,9 @@ package com.humber.java.view;
 import com.humber.java.model.Album;
 
 import javax.swing.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.File;
 
 /**
  * Created by mohit on 2017-02-15.
@@ -24,15 +27,7 @@ public class Gui  extends JFrame {
     AlbumViewPanel albumViewPanel;
 
 
-    public void setAlbumViewPanel(AlbumViewPanel albumViewPanel) {
-        this.setVisible(false);
-        this.albumViewPanel = albumViewPanel;
-        albumViewPanel.setSize(WINDOW_WIDTH,WINDOW_HEIGHT);
-        albumViewPanel.setVisible(true);
-        this.add(albumViewPanel);
-        this.setVisible(true);
 
-    }
 
     public Gui() {
         super("Assignment 1");
@@ -60,9 +55,26 @@ public class Gui  extends JFrame {
         fileMenu = new JMenu("File");
 
         newFileMenuItem = new JMenuItem("New Album");
+        newFileMenuItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                CreateAlbumFrame createAlbumFrame = new CreateAlbumFrame();
+            }
+        });
         fileMenu.add(newFileMenuItem);
 
         openFileMenuItem = new JMenuItem("Open a Picture");
+        openFileMenuItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                JFileChooser fileChooser = new JFileChooser();
+                int result = fileChooser.showOpenDialog(Gui.this);
+                if(result == JFileChooser.APPROVE_OPTION) {
+                    File selectedFile = fileChooser.getSelectedFile();
+                    System.out.print(selectedFile.getAbsoluteFile());
+                }
+            }
+        });
         fileMenu.add(openFileMenuItem);
 
         fileMenu.addSeparator();
@@ -81,5 +93,14 @@ public class Gui  extends JFrame {
         this.setJMenuBar(menuBar);
     }
 
+    public void setAlbumViewPanel(AlbumViewPanel albumViewPanel) {
+        this.setVisible(false);
+        this.albumViewPanel = albumViewPanel;
+        albumViewPanel.setSize(WINDOW_WIDTH,WINDOW_HEIGHT);
+        albumViewPanel.setVisible(true);
+        this.add(albumViewPanel);
+        this.setVisible(true);
+
+    }
 
 }
