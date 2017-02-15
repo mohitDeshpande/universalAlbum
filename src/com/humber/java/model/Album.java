@@ -1,6 +1,13 @@
 package com.humber.java.model;
 
+import com.humber.java.view.Gui;
+
+import javax.imageio.ImageIO;
 import javax.swing.*;
+import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,6 +23,7 @@ public class Album {
     private List<ImageIcon> images;
 
     public Album() {
+        images = new ArrayList<ImageIcon>();
     }
 
     public Album(String name, String createdOn, String editedBy) {
@@ -65,5 +73,23 @@ public class Album {
 
     public void setImages(List<ImageIcon> images) {
         this.images = images;
+    }
+
+    /**
+     * Adds an image to the album image list and also scales it according to the Main window width
+     * @param path The path of the image to be opened
+     */
+    public void addImage(String path) {
+        try {
+            BufferedImage image = ImageIO.read(new File(path));
+            Image scaledImage = image.getScaledInstance(Gui.WINDOW_WIDTH,-1, Image.SCALE_SMOOTH);
+            images.add(new ImageIcon(scaledImage));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void addImage(ImageIcon imageIcon) {
+        images.add(imageIcon);
     }
 }

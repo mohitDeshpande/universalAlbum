@@ -18,6 +18,7 @@ public class AlbumViewPanel extends JPanel {
     private JLabel editedByLabel;
 
     private JPanel photoPanel;
+    private JScrollPane scrollPane;
 
     public AlbumViewPanel(Album album) {
         this.album = album;
@@ -30,6 +31,7 @@ public class AlbumViewPanel extends JPanel {
         createdOnLabel = new JLabel();
         editedByLabel = new JLabel();
         photoPanel = new JPanel();
+
         photoPanel.setLayout(new GridLayout(this.album.getPhotoCount(), 1));
         metaDataPanel.add(albumNameLabel);
         metaDataPanel.add(createdOnLabel);
@@ -39,11 +41,12 @@ public class AlbumViewPanel extends JPanel {
 
         metaDataPanel.setVisible(true);
         photoPanel.setVisible(true);
+        scrollPane = new JScrollPane(photoPanel);
 
 
-        this.setLayout(new GridLayout(1,1));
-        this.add(metaDataPanel);
-        this.add(photoPanel);
+        this.setLayout(new BorderLayout());
+        this.add(metaDataPanel, BorderLayout.NORTH);
+        this.add(scrollPane, BorderLayout.CENTER);
         this.setVisible(true);
 
     }
@@ -65,6 +68,7 @@ public class AlbumViewPanel extends JPanel {
         // add each photo from the album into the photopanel
         for (ImageIcon image: album.getImages()) {
             JLabel imageLabel = new JLabel();
+            imageLabel.setSize(400,400);
             imageLabel.setIcon(image);
             photoPanel.add(imageLabel);
         }
