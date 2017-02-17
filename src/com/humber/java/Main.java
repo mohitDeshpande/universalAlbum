@@ -15,16 +15,6 @@ public class Main {
 
         Gui gui = new Gui();
 
-        Album album = new Album();
-        album.setName("Test");
-        album.setCreatedOn("Summer ");
-        album.setEditedBy("Mohit");
-        ImageIcon i = new ImageIcon("/Users/mohit/Developer/Humber/Semester 2/Java/Assignment1/src/com/humber/java/assets/NatGeo01.jpg");
-        album.addImage("src/com/humber/java/assets/NatGeo01.jpg");
-
-        AlbumViewPanel albumViewPanel = new AlbumViewPanel(album);
-
-        gui.setAlbumViewPanel(albumViewPanel);
     }
 
 }

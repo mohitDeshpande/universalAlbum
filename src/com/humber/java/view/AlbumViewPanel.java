@@ -60,6 +60,7 @@ public class AlbumViewPanel extends JPanel {
         setPanelData();
     }
 
+
     public void setPanelData() {
         albumNameLabel.setText("Album name : " + album.getName());
         createdOnLabel.setText("Created On : " + album.getCreatedOn());
