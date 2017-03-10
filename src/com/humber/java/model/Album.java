@@ -1,6 +1,6 @@
 package com.humber.java.model;
 
-import com.humber.java.view.Gui;
+import com.humber.java.presenter.Gui;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;

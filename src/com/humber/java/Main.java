@@ -1,10 +1,6 @@
 package com.humber.java;
 
-import com.humber.java.model.Album;
-import com.humber.java.view.AlbumViewPanel;
-import com.humber.java.view.Gui;
-
-import javax.swing.*;
+import com.humber.java.presenter.Gui;
 
 /**
  * Created by mohit on 2017-02-13.

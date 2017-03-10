@@ -37,7 +37,7 @@ public class AlbumViewPanel extends JPanel {
         metaDataPanel.add(createdOnLabel);
         metaDataPanel.add(editedByLabel);
 
-        setPanelData();
+        setAndRefreshPanelData();
 
         metaDataPanel.setVisible(true);
         photoPanel.setVisible(true);
@@ -57,16 +57,30 @@ public class AlbumViewPanel extends JPanel {
 
     public void setAlbum(Album album) {
         this.album = album;
-        setPanelData();
+        setAndRefreshPanelData();
     }
 
+    /**
+     * Adds an image to the album in this AlbumViewPanel
+     * @param imagePath The image to be added to the album
+     */
+    public void addImageToAlbum(String imagePath) {
+        this.album.addImage(imagePath);
+        setAndRefreshPanelData();
+    }
 
-    public void setPanelData() {
+    /**
+     * Removes Components from the album panel and adds new components according to the album
+     */
+    public void setAndRefreshPanelData() {
+
         albumNameLabel.setText("Album name : " + album.getName());
         createdOnLabel.setText("Created On : " + album.getCreatedOn());
         editedByLabel.setText("Edited By : " + album.getEditedBy());
 
         // add each photo from the album into the photopanel
+        photoPanel.removeAll();
+        photoPanel.setLayout(new GridLayout(album.getPhotoCount(),1));
         for (ImageIcon image: album.getImages()) {
             JLabel imageLabel = new JLabel();
             imageLabel.setSize(400,400);
@@ -74,4 +88,5 @@ public class AlbumViewPanel extends JPanel {
             photoPanel.add(imageLabel);
         }
     }
+
 }
