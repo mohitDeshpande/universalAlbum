@@ -73,6 +73,7 @@ public class AlbumViewPanel extends JPanel {
      * Removes Components from the album panel and adds new components according to the album
      */
     public void setAndRefreshPanelData() {
+        this.setVisible(false);
 
         albumNameLabel.setText("Album name : " + album.getName());
         createdOnLabel.setText("Created On : " + album.getCreatedOn());
@@ -87,6 +88,7 @@ public class AlbumViewPanel extends JPanel {
             imageLabel.setIcon(image);
             photoPanel.add(imageLabel);
         }
+        this.setVisible(true);
     }
 
 }

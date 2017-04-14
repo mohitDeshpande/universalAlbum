@@ -9,6 +9,11 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -30,15 +35,31 @@ public class Gui  extends JFrame {
     JMenu viewMenu;
 
     List<Album> albumList;
-    Album currentAlbumId;
+    int currentAlbumIndex;
 
     AlbumViewPanel albumViewPanel;
 
 
-
+    // db variables
+    Connection connection = null;
+    String url = "jdbc:mysql://localhost:8889/java";
+    
 
     public Gui() {
         super("Assignment 1");
+        
+        // try connecting to the db
+        try {
+            
+            System.out.println("Establishing connection to the database ...");
+            this.connection = DriverManager.getConnection(this.url, "root", "root");    
+            
+            System.out.println("Connection Established ...");
+        } catch (SQLException ex) {
+            System.err.println("An error has occured while trying to connect to the database " + ex.getMessage());
+            
+        }
+        
         this.setSize(WINDOW_WIDTH,WINDOW_HEIGHT);
         albumList = new ArrayList<Album>();
 
@@ -47,6 +68,9 @@ public class Gui  extends JFrame {
         createMenu();
 
         this.setVisible(true);
+        this.setDefaultCloseOperation(EXIT_ON_CLOSE);
+        
+        
     }
 
 
@@ -65,6 +89,7 @@ public class Gui  extends JFrame {
                 if(newAlbum != null) {
                     albumList.add(newAlbum);
                     updateViewMenu();
+                    changeAlbumViewPanel(newAlbum);
                 }
             }
         });
@@ -82,6 +107,12 @@ public class Gui  extends JFrame {
         fileMenu.addSeparator();
 
         exitFileMenuItem = new JMenuItem("Exit");
+        exitFileMenuItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                System.exit(0);
+            }
+        });
         fileMenu.add(exitFileMenuItem);
 
         menuBar.add(fileMenu);
@@ -103,7 +134,6 @@ public class Gui  extends JFrame {
     public void setAlbumViewPanel(AlbumViewPanel albumViewPanel) {
         this.setVisible(false);
         this.albumViewPanel = albumViewPanel;
-        this.currentAlbumId = albumViewPanel.getAlbum();
         albumViewPanel.setSize(WINDOW_WIDTH,WINDOW_HEIGHT);
         albumViewPanel.setVisible(true);
         this.add(this.albumViewPanel);
@@ -119,17 +149,42 @@ public class Gui  extends JFrame {
         album1.setName("Assignment 1");
         album1.setCreatedOn("Winter");
         album1.setEditedBy("Mohit");
-        album1.addImage("src/com/humber/java/assets/NatGeo01.jpg");
+        album1.addImage("/Users/mohit/Desktop/java/Assignment1/src/com/humber/java/assets/NatGeo01.jpg");
         albumList.add(album1);
-        this.currentAlbumId = album1;
-        setAlbumViewPanel(new AlbumViewPanel(currentAlbumId));
+        this.currentAlbumIndex = 0;
+        setAlbumViewPanel(new AlbumViewPanel(albumList.get(currentAlbumIndex)));
 
         Album album2 = new Album();
         album2.setName("Dummy");
         album2.setCreatedOn("Winter");
         album2.setEditedBy("Mohit D");
-        album2.addImage("src/com/humber/java/assets/NatGeo06.jpg");
+        album2.addImage("/Users/mohit/Desktop/java/Assignment1/src/com/humber/java/assets/NatGeo06.jpg");
         albumList.add(album2);
+        
+        // get third album from DB
+        try {
+        
+            Statement statement = connection.createStatement();
+            ResultSet rs = statement.executeQuery("select name,description, flag from country");
+            while(rs.next()) {
+                String name = rs.getString("name");
+                ImageIcon flag = new ImageIcon(rs.getBlob("flag").getBytes(1, (int)rs.getBlob("flag").length()));
+                String description = rs.getString("description");
+            
+                Album album3 = new Album();
+                album3.setName(name);
+                album3.setCreatedOn("example");
+                album3.setEditedBy(description);
+                album3.addImage(flag);
+                albumList.add(album3);
+            }
+        
+        } catch(SQLException ex) {
+            System.out.println("Error occured: "+ex.getMessage());
+            ex.printStackTrace();
+        }
+        
+        
     }
 
 
@@ -141,13 +196,12 @@ public class Gui  extends JFrame {
 
         viewMenu.removeAll();
 
-        for (Album album: albumList) {
+        for (final Album album: albumList) {
             JMenuItem menuItem = new JMenuItem(album.getName());
             menuItem.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    remove(albumViewPanel);
-                    setAlbumViewPanel(new AlbumViewPanel(album));
+                    changeAlbumViewPanel(album);
                 }
             });
             viewMenu.add(menuItem);
@@ -196,12 +250,24 @@ public class Gui  extends JFrame {
                     System.out.println("File is not an image");
                 } else {
                     System.out.println("File is an image");
-
+                    albumList.get(currentAlbumIndex).addImage(selectedFile.getAbsolutePath());
+                    albumViewPanel.setAndRefreshPanelData();
                 }
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
+    }
+
+    /**
+     * Changes the current {@link AlbumViewPanel} with new {@link AlbumViewPanel} of supplied {@link Album}
+     * @param album The new {@link Album} to be set
+     */
+    public void changeAlbumViewPanel(Album album) {
+        remove(albumViewPanel);
+        setAlbumViewPanel(new AlbumViewPanel(album));
+        currentAlbumIndex = albumList.indexOf(album);
+        System.out.println("Current Album Index : " + currentAlbumIndex);
     }
 
 }
