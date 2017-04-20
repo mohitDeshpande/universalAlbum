@@ -42,7 +42,9 @@ public class Gui  extends JFrame {
 
     // db variables
     Connection connection = null;
-    String url = "jdbc:mysql://localhost:8889/java";
+    String url = "jdbc:mysql://vaulty.cloud:3306/java_album";
+    String userid = "java_album";
+    String password = "Java_@lbum";
     
 
     public Gui() {
@@ -52,7 +54,7 @@ public class Gui  extends JFrame {
         try {
             
             System.out.println("Establishing connection to the database ...");
-            this.connection = DriverManager.getConnection(this.url, "root", "root");    
+            this.connection = DriverManager.getConnection(this.url, userid, password);    
             
             System.out.println("Connection Established ...");
         } catch (SQLException ex) {
