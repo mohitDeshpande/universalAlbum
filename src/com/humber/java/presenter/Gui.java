@@ -35,6 +35,7 @@ public class Gui extends JFrame {
     JMenu fileMenu;
     JMenuItem newFileMenuItem;
     JMenuItem openFileMenuItem;
+    JMenuItem refreshFileMenuItem;
     JMenuItem exitFileMenuItem;
 
     JMenu viewMenu;
@@ -48,16 +49,25 @@ public class Gui extends JFrame {
         super("Final Project. Universal image album ");
        
         this.setSize(WINDOW_WIDTH,WINDOW_HEIGHT);
+        for(Album album : this.albumDao.getAllAlbums()) {
+            System.out.println(album);
+            for(Picture pic : album.getImages()) {
+                System.out.println(pic);
+            }
+        }
         albumList = (ArrayList<Album>) this.albumDao.getAllAlbums();
         currentAlbumIndex = 0;
         setAlbumViewPanel(new AlbumViewPanel(albumList.get(currentAlbumIndex)));
 
         createMenu();
-       
 
         this.setVisible(true);
         this.setDefaultCloseOperation(EXIT_ON_CLOSE);
 
+    }
+    
+    public void updateAlbumsData() {
+        this.albumList = (ArrayList<Album>) this.albumDao.getAllAlbums();
     }
 
 
@@ -89,8 +99,16 @@ public class Gui extends JFrame {
             }
         });
         fileMenu.add(openFileMenuItem);
-
         fileMenu.addSeparator();
+        
+        refreshFileMenuItem = new JMenuItem("Refresh Data");
+        refreshFileMenuItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                updateAlbumsData();
+            }
+        });
+        fileMenu.add(refreshFileMenuItem);
 
         exitFileMenuItem = new JMenuItem("Exit");
         exitFileMenuItem.addActionListener(new ActionListener() {
@@ -197,6 +215,7 @@ public class Gui extends JFrame {
                     Picture picture = new Picture(selectedFile.getAbsolutePath(), currentAlbum);
                     this.imageDao.addImage(picture);
                     currentAlbum.addImage(picture);
+                    this.albumDao.updateAlbum(currentAlbum);
                     albumViewPanel.setAndRefreshPanelData();
                 }
             } catch (IOException e) {

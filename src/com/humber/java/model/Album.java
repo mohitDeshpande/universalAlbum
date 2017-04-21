@@ -12,6 +12,7 @@ import java.lang.reflect.Array;
 import java.util.Date;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -34,6 +35,7 @@ public class Album {
         this.name = name;
         this.createdOn = createdOn;
         this.editedBy = editedBy;
+        this.images = new HashSet<Picture>();
     }
     
     public Album(String name, Date createdOn, String editedBy, Set<Picture> pictures) {
