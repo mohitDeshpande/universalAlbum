@@ -1,6 +1,7 @@
 package com.humber.java.view;
 
 import com.humber.java.model.Album;
+import com.humber.java.model.Picture;
 
 import javax.swing.*;
 import java.awt.*;
@@ -82,10 +83,10 @@ public class AlbumViewPanel extends JPanel {
         // add each photo from the album into the photopanel
         photoPanel.removeAll();
         photoPanel.setLayout(new GridLayout(album.getPhotoCount(),1));
-        for (ImageIcon image: album.getImages()) {
+        for (Picture picture: album.getImages()) {
             JLabel imageLabel = new JLabel();
             imageLabel.setSize(400,400);
-            imageLabel.setIcon(image);
+            imageLabel.setIcon(new ImageIcon(picture.getFile()));
             photoPanel.add(imageLabel);
         }
         this.setVisible(true);

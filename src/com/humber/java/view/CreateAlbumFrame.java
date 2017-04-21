@@ -6,6 +6,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 
 /**
  * Created by mohit on 2017-02-15.
@@ -43,15 +45,22 @@ public class CreateAlbumFrame extends JFrame {
         createButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                String name = nameTextField.getText();
-                String create = createdTextField.getText();
-                String edit = editedTextField.getText();
+                try {
+                    String name = nameTextField.getText();
+                    String create = createdTextField.getText();
+                    String edit = editedTextField.getText();
 
-                System.out.println(name + create + edit);
-
-                album = new Album(name,create,edit);
-
-                setVisible(false);
+                    System.out.println(name + create + edit);
+                
+                
+                    DateFormat df = new SimpleDateFormat("dd MM yyyy");
+                    album = new Album(name,df.parse(create),edit);
+                    
+                } catch (Exception error) {
+                    error.printStackTrace();
+                } finally {
+                    setVisible(false);
+                }
             }
         });
 

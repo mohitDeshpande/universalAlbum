@@ -8,33 +8,48 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Array;
+import java.util.Date;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Set;
 
 /**
- * Created by mohit on 2017-02-14.
+ * Created by DS
  */
 public class Album {
-
+    private int id;
     private String name;
-    private String createdOn;
+    private Date createdOn;
     private String editedBy;
 
-    private List<ImageIcon> images;
+    private Set<Picture> images;
 
     public Album() {
-        images = new ArrayList<ImageIcon>();
+        
     }
 
-    public Album(String name, String createdOn, String editedBy) {
+    public Album(String name, Date createdOn, String editedBy) {
         this.name = name;
         this.createdOn = createdOn;
         this.editedBy = editedBy;
-        images = new ArrayList<ImageIcon>();
+    }
+    
+    public Album(String name, Date createdOn, String editedBy, Set<Picture> pictures) {
+        this.name = name;
+        this.createdOn = createdOn;
+        this.editedBy = editedBy;
+        this.images = pictures;
     }
 
-
+    public int getId() {
+        return id;
+    }
+    
+    public void setId(int albumId) {
+        this.id = albumId;
+    }
 
     public String getName() {
         return name;
@@ -44,11 +59,11 @@ public class Album {
         this.name = name;
     }
 
-    public String getCreatedOn() {
+    public Date getCreatedOn() {
         return createdOn;
     }
 
-    public void setCreatedOn(String createdOn) {
+    public void setCreatedOn(Date createdOn) {
         this.createdOn = createdOn;
     }
 
@@ -60,7 +75,7 @@ public class Album {
         this.editedBy = editedBy;
     }
 
-    public List<ImageIcon> getImages() {
+    public Set<Picture> getImages() {
         return images;
     }
 
@@ -72,7 +87,7 @@ public class Album {
         return this.images.size();
     }
 
-    public void setImages(List<ImageIcon> images) {
+    public void setImages(Set<Picture> images) {
         this.images = images;
     }
 
@@ -81,65 +96,20 @@ public class Album {
      * @param path The path of the image to be opened
      */
     public void addImage(String path) {
-        try {
-            BufferedImage image = ImageIO.read(new File(path));
-            Image scaledImage = image.getScaledInstance(Gui.WINDOW_WIDTH,-1, Image.SCALE_SMOOTH);
-            images.add(new ImageIcon(scaledImage));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        Picture picture = new Picture(path, this);
+        images.add(picture);
     }
 
-    public void addImage(ImageIcon imageIcon) {
-        images.add(imageIcon);
+    public void addImage(Picture image) {
+        images.add(image);
     }
 
-    /**
-     * Indicates whether some other object is "equal to" this one.
-     * <p>
-     * The {@code equals} method implements an equivalence relation
-     * on non-null object references:
-     * <ul>
-     * <li>It is <i>reflexive</i>: for any non-null reference value
-     * {@code x}, {@code x.equals(x)} should return
-     * {@code true}.
-     * <li>It is <i>symmetric</i>: for any non-null reference values
-     * {@code x} and {@code y}, {@code x.equals(y)}
-     * should return {@code true} if and only if
-     * {@code y.equals(x)} returns {@code true}.
-     * <li>It is <i>transitive</i>: for any non-null reference values
-     * {@code x}, {@code y}, and {@code z}, if
-     * {@code x.equals(y)} returns {@code true} and
-     * {@code y.equals(z)} returns {@code true}, then
-     * {@code x.equals(z)} should return {@code true}.
-     * <li>It is <i>consistent</i>: for any non-null reference values
-     * {@code x} and {@code y}, multiple invocations of
-     * {@code x.equals(y)} consistently return {@code true}
-     * or consistently return {@code false}, provided no
-     * information used in {@code equals} comparisons on the
-     * objects is modified.
-     * <li>For any non-null reference value {@code x},
-     * {@code x.equals(null)} should return {@code false}.
-     * </ul>
-     * <p>
-     * The {@code equals} method for class {@code Object} implements
-     * the most discriminating possible equivalence relation on objects;
-     * that is, for any non-null reference values {@code x} and
-     * {@code y}, this method returns {@code true} if and only
-     * if {@code x} and {@code y} refer to the same object
-     * ({@code x == y} has the value {@code true}).
-     * <p>
-     * Note that it is generally necessary to override the {@code hashCode}
-     * method whenever this method is overridden, so as to maintain the
-     * general contract for the {@code hashCode} method, which states
-     * that equal objects must have equal hash codes.
-     *
-     * @param obj the reference object with which to compare.
-     * @return {@code true} if this object is the same as the obj
-     * argument; {@code false} otherwise.
-     * @see #hashCode()
-     * @see HashMap
-     */
+    @Override
+    public String toString() {
+        return "Album [id=" + id + ", name=" + name
+                + ", createdOd=" + createdOn.toString() + ", editedBy=" + editedBy + "]";
+    }     
+
     @Override
     public boolean equals(Object obj) {
         if(obj instanceof Album) {

@@ -3,27 +3,32 @@ package com.humber.java.presenter;
 import com.humber.java.model.Album;
 import com.humber.java.view.AlbumViewPanel;
 
+import com.humber.java.dao.AlbumDAO;
+import com.humber.java.dao.ImageDAO;
+
+import com.humber.java.model.Picture;
+
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Created by mohit on 2017-02-15.
  */
-public class Gui  extends JFrame {
-
+public class Gui extends JFrame {
+    
     public static int WINDOW_HEIGHT = 500;
     public static int WINDOW_WIDTH = 500;
+    
+    private AlbumDAO albumDao = new AlbumDAO();
+    private ImageDAO imageDao = new ImageDAO();
 
     JMenuBar menuBar;
 
@@ -39,46 +44,25 @@ public class Gui  extends JFrame {
 
     AlbumViewPanel albumViewPanel;
 
-
-    // db variables
-    Connection connection = null;
-    String url = "jdbc:mysql://vaulty.cloud:3306/java_album";
-    String userid = "java_album";
-    String password = "Java_@lbum";
-    
-
     public Gui() {
-        super("Assignment 1");
-        
-        // try connecting to the db
-        try {
-            
-            System.out.println("Establishing connection to the database ...");
-            this.connection = DriverManager.getConnection(this.url, userid, password);    
-            
-            System.out.println("Connection Established ...");
-        } catch (SQLException ex) {
-            System.err.println("An error has occured while trying to connect to the database " + ex.getMessage());
-            
-        }
-        
+        super("Final Project. Universal image album ");
+       
         this.setSize(WINDOW_WIDTH,WINDOW_HEIGHT);
-        albumList = new ArrayList<Album>();
-
-        createDummyAlbum();
+        albumList = (ArrayList<Album>) this.albumDao.getAllAlbums();
+        currentAlbumIndex = 0;
+        setAlbumViewPanel(new AlbumViewPanel(albumList.get(currentAlbumIndex)));
 
         createMenu();
+       
 
         this.setVisible(true);
         this.setDefaultCloseOperation(EXIT_ON_CLOSE);
-        
-        
+
     }
 
 
     public void createMenu() {
         menuBar = new JMenuBar();
-
 
         // build the file menu;
         fileMenu = new JMenu("File");
@@ -140,62 +124,13 @@ public class Gui  extends JFrame {
         albumViewPanel.setVisible(true);
         this.add(this.albumViewPanel);
         this.setVisible(true);
-
     }
-
-    /**
-     * Creates 2 dummy albums for testing purpose
-     */
-    public void createDummyAlbum() {
-        Album album1 = new Album();
-        album1.setName("Assignment 1");
-        album1.setCreatedOn("Winter");
-        album1.setEditedBy("Mohit");
-        album1.addImage("/Users/mohit/Desktop/java/Assignment1/src/com/humber/java/assets/NatGeo01.jpg");
-        albumList.add(album1);
-        this.currentAlbumIndex = 0;
-        setAlbumViewPanel(new AlbumViewPanel(albumList.get(currentAlbumIndex)));
-
-        Album album2 = new Album();
-        album2.setName("Dummy");
-        album2.setCreatedOn("Winter");
-        album2.setEditedBy("Mohit D");
-        album2.addImage("/Users/mohit/Desktop/java/Assignment1/src/com/humber/java/assets/NatGeo06.jpg");
-        albumList.add(album2);
-        
-        // get third album from DB
-        try {
-        
-            Statement statement = connection.createStatement();
-            ResultSet rs = statement.executeQuery("select name,description, flag from country");
-            while(rs.next()) {
-                String name = rs.getString("name");
-                ImageIcon flag = new ImageIcon(rs.getBlob("flag").getBytes(1, (int)rs.getBlob("flag").length()));
-                String description = rs.getString("description");
-            
-                Album album3 = new Album();
-                album3.setName(name);
-                album3.setCreatedOn("example");
-                album3.setEditedBy(description);
-                album3.addImage(flag);
-                albumList.add(album3);
-            }
-        
-        } catch(SQLException ex) {
-            System.out.println("Error occured: "+ex.getMessage());
-            ex.printStackTrace();
-        }
-        
-        
-    }
-
 
     /**
      * Used to Update the view menu with new albums data
      * To be called when a new album is added to the album list.
      */
     public void updateViewMenu() {
-
         viewMenu.removeAll();
 
         for (final Album album: albumList) {
@@ -216,7 +151,6 @@ public class Gui  extends JFrame {
      */
     public Album showNewAlbumDialog() {
         Album album = null;
-
         // Construct Dialog components
         JTextField nameTextField = new JTextField();
         JTextField createdTextField = new JTextField();
@@ -233,7 +167,14 @@ public class Gui  extends JFrame {
         // show dialog and get result and create album if result is ok
         int result = JOptionPane.showConfirmDialog(this,inputs,"Create New Album",JOptionPane.PLAIN_MESSAGE);
         if (result == JOptionPane.OK_OPTION) {
-            album = new Album(nameTextField.getText(), createdTextField.getText(), editedTextField.getText());
+            try {
+                DateFormat df = new SimpleDateFormat("dd/MM/yyyy");
+                album = new Album(nameTextField.getText(), df.parse(createdTextField.getText()), editedTextField.getText());
+                this.albumDao.addAlbum(album);
+            }
+            catch (Exception e) {
+                e.printStackTrace();
+            }
         }
 
         return album;
@@ -252,7 +193,10 @@ public class Gui  extends JFrame {
                     System.out.println("File is not an image");
                 } else {
                     System.out.println("File is an image");
-                    albumList.get(currentAlbumIndex).addImage(selectedFile.getAbsolutePath());
+                    Album currentAlbum = albumList.get(currentAlbumIndex);
+                    Picture picture = new Picture(selectedFile.getAbsolutePath(), currentAlbum);
+                    this.imageDao.addImage(picture);
+                    currentAlbum.addImage(picture);
                     albumViewPanel.setAndRefreshPanelData();
                 }
             } catch (IOException e) {
