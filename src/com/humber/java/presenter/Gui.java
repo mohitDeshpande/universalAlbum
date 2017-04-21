@@ -67,7 +67,11 @@ public class Gui extends JFrame {
     }
     
     public void updateAlbumsData() {
-        this.albumList = (ArrayList<Album>) this.albumDao.getAllAlbums();
+        
+        AlbumDAO albumDao2 = new AlbumDAO();
+        System.out.println(albumDao2.getAllAlbums());
+        this.albumList = albumDao2.getAllAlbums();
+        updateViewMenu();
     }
 
 

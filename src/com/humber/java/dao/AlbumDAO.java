@@ -18,6 +18,7 @@ import org.hibernate.Transaction;
 
 import com.humber.java.model.Album;
 import com.humber.java.HibernateUtil;
+import org.hibernate.CacheMode;
 
 public class AlbumDAO {
     public void addAlbum(Album album) {
@@ -82,6 +83,7 @@ public class AlbumDAO {
         try {
             trns = session.beginTransaction();
             albums = session.createQuery("from Album").list();
+            session.setCacheMode(CacheMode.IGNORE);
         } catch (RuntimeException e) {
             e.printStackTrace();
         } finally {
@@ -104,6 +106,7 @@ public class AlbumDAO {
         } catch (RuntimeException e) {
             e.printStackTrace();
         } finally {
+            session.clear();
             session.flush();
             session.close();
         }

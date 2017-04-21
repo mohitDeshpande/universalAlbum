@@ -57,7 +57,7 @@ Contributor(s):
         <set name="images" table="images"
 		inverse="true" lazy="false" fetch="select">
             <key>
-                <column name="id" not-null="true" />
+                <column name="album_id" not-null="true" />
             </key>
             <one-to-many class="com.humber.java.model.Picture" />
         </set>
